@@ -1,1 +1,349 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>สมาชิก VIP – Code AppsScript พร้อมใช้งาน</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream: #fdf6ec;
+      --brown-dark: #2c1a0e;
+      --brown-mid: #6b3f1e;
+      --brown-light: #c08040;
+      --gold: #d4a843;
+      --gold-light: #f0d080;
+      --espresso: #1a0e07;
+      --foam: #fff8f0;
+    }
 
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--espresso);
+      background-image:
+        radial-gradient(ellipse at 20% 20%, rgba(107,63,30,0.35) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 80%, rgba(192,128,64,0.2) 0%, transparent 55%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.015'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      font-family: 'Sarabun', sans-serif;
+    }
+
+    /* Steam animation */
+    @keyframes steam {
+      0%   { opacity: 0; transform: translateY(0) scaleX(1); }
+      30%  { opacity: 0.6; }
+      100% { opacity: 0; transform: translateY(-40px) scaleX(1.4); }
+    }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shimmer {
+      0%   { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    @keyframes pulse-ring {
+      0%   { transform: scale(0.92); opacity: 0.7; }
+      50%  { transform: scale(1.08); opacity: 0.3; }
+      100% { transform: scale(0.92); opacity: 0.7; }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-6px); }
+    }
+
+    .card {
+      max-width: 680px;
+      width: 100%;
+      background: linear-gradient(160deg, #fff8f0 0%, #fdebd0 60%, #f5d9a8 100%);
+      border-radius: 28px;
+      padding: 52px 48px 48px;
+      position: relative;
+      box-shadow:
+        0 0 0 1px rgba(212,168,67,0.4),
+        0 4px 40px rgba(0,0,0,0.55),
+        inset 0 1px 0 rgba(255,255,255,0.9);
+      animation: fadeSlideUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    /* Gold corner ornaments */
+    .card::before, .card::after {
+      content: '❧';
+      position: absolute;
+      font-size: 28px;
+      color: var(--gold);
+      opacity: 0.5;
+    }
+    .card::before { top: 18px; left: 22px; }
+    .card::after  { bottom: 18px; right: 22px; transform: rotate(180deg); }
+
+    /* Coffee cup illustration */
+    .cup-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 8px;
+      position: relative;
+    }
+    .cup-svg { width: 80px; height: 80px; animation: float 3.5s ease-in-out infinite; }
+    .steam-line {
+      position: absolute;
+      width: 4px;
+      border-radius: 4px;
+      background: rgba(107,63,30,0.18);
+      animation: steam 2s ease-in-out infinite;
+    }
+    .steam-line:nth-child(1) { height: 22px; top: -10px; left: 50%; margin-left: -12px; animation-delay: 0s; }
+    .steam-line:nth-child(2) { height: 16px; top: -6px;  left: 50%; margin-left: 4px;  animation-delay: 0.5s; }
+    .steam-line:nth-child(3) { height: 19px; top: -8px;  left: 50%; margin-left: -26px; animation-delay: 1s; }
+
+    .badge {
+      display: inline-block;
+      background: linear-gradient(90deg, var(--brown-mid), var(--gold), var(--brown-mid));
+      background-size: 400px 100%;
+      animation: shimmer 3s linear infinite;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 5px 20px;
+      border-radius: 100px;
+      margin-bottom: 18px;
+      display: block;
+      text-align: center;
+      width: fit-content;
+      margin: 0 auto 20px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 4vw, 2.3rem);
+      color: var(--brown-dark);
+      text-align: center;
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+    h1 em {
+      font-style: italic;
+      color: var(--brown-mid);
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--brown-light);
+      font-size: 0.95rem;
+      margin-bottom: 30px;
+      letter-spacing: 0.5px;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0;
+    }
+    .divider span { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+    .divider i { color: var(--gold); font-size: 18px; font-style: normal; }
+
+    .body-text {
+      color: var(--brown-dark);
+      font-size: 1.05rem;
+      line-height: 1.9;
+      text-align: left;
+      background: rgba(255,255,255,0.45);
+      border-left: 4px solid var(--gold);
+      border-radius: 0 12px 12px 0;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+    .body-text strong { color: var(--brown-mid); font-weight: 700; }
+
+    /* Highlight pills */
+    .perks {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .perk {
+      background: rgba(255,255,255,0.6);
+      border: 1px solid rgba(212,168,67,0.3);
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      animation: fadeSlideUp 0.8s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .perk:nth-child(1) { animation-delay: 0.15s; }
+    .perk:nth-child(2) { animation-delay: 0.25s; }
+    .perk:nth-child(3) { animation-delay: 0.35s; }
+    .perk:nth-child(4) { animation-delay: 0.45s; }
+    .perk-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+    .perk-text { font-size: 0.88rem; line-height: 1.5; color: var(--brown-dark); }
+    .perk-text b { display: block; font-size: 0.95rem; color: var(--brown-mid); margin-bottom: 2px; }
+
+    .cta-wrap {
+      text-align: center;
+      position: relative;
+    }
+    .ring {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 220px; height: 60px;
+      border-radius: 60px;
+      border: 2px solid var(--gold-light);
+      opacity: 0.4;
+      animation: pulse-ring 2.4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      position: relative;
+      background: linear-gradient(135deg, var(--brown-mid) 0%, var(--gold) 60%, #e8b94a 100%);
+      color: #fff;
+      font-family: 'Sarabun', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-decoration: none;
+      padding: 16px 44px;
+      border-radius: 60px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 6px 28px rgba(107,63,30,0.45), inset 0 1px 0 rgba(255,255,255,0.25);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .cta-btn:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 10px 36px rgba(107,63,30,0.55), inset 0 1px 0 rgba(255,255,255,0.25);
+    }
+    .cta-btn:active { transform: translateY(0) scale(0.98); }
+
+    .note {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.85rem;
+      color: var(--brown-mid);
+      opacity: 0.8;
+    }
+
+    .footer-ornament {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 0.78rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.5;
+    }
+
+    @media (max-width: 520px) {
+      .card { padding: 36px 24px 36px; }
+      .perks { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+
+    <!-- Coffee cup -->
+    <div class="cup-wrap">
+      <div class="steam-line"></div>
+      <div class="steam-line"></div>
+      <div class="steam-line"></div>
+      <svg class="cup-svg" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- saucer -->
+        <ellipse cx="40" cy="68" rx="30" ry="6" fill="#c08040" opacity="0.25"/>
+        <ellipse cx="40" cy="66" rx="28" ry="5" fill="#d4a843" opacity="0.4"/>
+        <!-- cup body -->
+        <path d="M16 34 Q16 66 40 66 Q64 66 64 34 Z" fill="url(#cupGrad)"/>
+        <!-- cup rim -->
+        <ellipse cx="40" cy="34" rx="24" ry="7" fill="#d4a843"/>
+        <ellipse cx="40" cy="34" rx="20" ry="5" fill="#c08040"/>
+        <!-- coffee surface -->
+        <ellipse cx="40" cy="34" rx="18" ry="4.5" fill="#3d1c08"/>
+        <!-- latte art swirl -->
+        <path d="M33 33 Q37 30 43 33 Q47 35 43 36 Q39 38 35 36 Q32 35 33 33Z" fill="#8b4a1a" opacity="0.5"/>
+        <!-- handle -->
+        <path d="M64 42 Q78 42 78 52 Q78 62 64 62" stroke="#c08040" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <defs>
+          <linearGradient id="cupGrad" x1="16" y1="34" x2="64" y2="66" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#e8b56a"/>
+            <stop offset="100%" stop-color="#c08040"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <span class="badge">☕ สมาชิก VIP ตลอดชีพ</span>
+
+    <h1>Code AppsScript<br><em>พร้อมใช้งาน</em></h1>
+    <p class="subtitle">สนับสนุนกาแฟ 1 แก้ว · รับสิทธิ์ทันที · ไม่มีค่าใช้จ่ายเพิ่มเติม</p>
+
+    <div class="divider"><span></span><i>✦</i><span></span></div>
+
+    <div class="body-text">
+      หากท่านสนใจ <strong>Code AppsScript พร้อมใช้งาน</strong> สามารถสนับสนุนกาแฟเพียง <strong>1 แก้ว</strong>
+      เป็นสมาชิกตลอดชีพ <strong>ดาวน์โหลดทุกระบบ VIP</strong> รวมถึง <strong>ระบบ Work from Home</strong>
+      และสามารถนำไปพัฒนาหน่วยงานของท่านได้เลย <strong>โดยเป็นลิขสิทธิ์ของท่านเอง</strong>
+      อนุญาตให้นำไปใช้ในเชิงพาณิชย์ได้ (ขายต่อได้) ☕
+    </div>
+
+    <div class="perks">
+      <div class="perk">
+        <span class="perk-icon">📦</span>
+        <div class="perk-text">
+          <b>200+ ระบบ</b>
+          มีระบบให้ดาวน์โหลดพร้อมใช้งานมากกว่า 200 ระบบ
+        </div>
+      </div>
+      <div class="perk">
+        <span class="perk-icon">🔄</span>
+        <div class="perk-text">
+          <b>อัปเดตทุกสัปดาห์</b>
+          เพิ่มระบบใหม่ๆ ทุกสัปดาห์ไม่มีจำกัด
+        </div>
+      </div>
+      <div class="perk">
+        <span class="perk-icon">🏠</span>
+        <div class="perk-text">
+          <b>Work from Home</b>
+          ระบบรองรับการทำงานจากบ้านครบชุด
+        </div>
+      </div>
+      <div class="perk">
+        <span class="perk-icon">⚖️</span>
+        <div class="perk-text">
+          <b>ลิขสิทธิ์ของท่าน</b>
+          นำไปใช้เชิงพาณิชย์ได้ เป็นสิทธิ์ของท่านเอง
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-wrap">
+      <div class="ring"></div>
+      <a
+        href="https://sites.google.com/view/pormodnoy/pormodnoy"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="cta-btn"
+      >
+        ☕ สมัครสมาชิกเลย
+      </a>
+    </div>
+
+    <p class="note">🕐 รอสักครู่ระบบจะตอบรับท่าน · เข้าใช้งานได้ทันที</p>
+
+    <div class="footer-ornament">· · · ✦ · · ·</div>
+
+  </div>
+
+</body>
+</html>
